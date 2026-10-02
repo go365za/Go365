@@ -173,8 +173,10 @@ export default function App() {
       <section className="phone-shell" aria-label="Workly home">
         <header className="topbar">
           <div className="brand">
-            <span className="brand-mark">W</span>
-            <span>workly</span>
+            <span className="brand-name">
+              go<span className="brand-pin"><Icon name="pin" size={15} /></span>365
+            </span>
+            <span className="brand-tagline">Every day. Every journey.</span>
           </div>
           <AppButton className="icon-button" onClick={() => setActiveTab("Alerts")}>
             <Icon name="bell" />
