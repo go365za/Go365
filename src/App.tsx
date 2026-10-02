@@ -203,7 +203,7 @@ export default function App() {
 
   return (
     <main className="app-stage">
-      <section className="phone-shell" aria-label="Workly home">
+      <section className="phone-shell" aria-label="Go365 transport">
         <header className="topbar">
           <div className="brand">
             <span className="brand-name">
@@ -218,6 +218,89 @@ export default function App() {
         </header>
 
         <div className="content">
+          {activeTab === "Profile" ? (
+            <div className="profile-screen">
+              <div className="profile-heading">
+                <div className="profile-photo">LM</div>
+                <div>
+                  <p className="eyebrow">PASSENGER PROFILE</p>
+                  <h1>Lerato Mokoena</h1>
+                  <span>lerato.mokoena@email.com</span>
+                </div>
+                <AppButton className="profile-edit">Edit</AppButton>
+              </div>
+
+              <section className="pass-card">
+                <div className="pass-brand">
+                  <span className="brand-name">go365</span>
+                  <span>PASS</span>
+                </div>
+                <span className="pass-crown"><Icon name="star" size={19} /></span>
+                <div className="pass-status">
+                  <span>Ride more. Save more.</span>
+                  <strong>R149 <small>/ month</small></strong>
+                </div>
+              </section>
+
+              <div className="benefit-grid">
+                {[
+                  { icon: "car" as IconName, value: "20%", label: "Off rides" },
+                  { icon: "shield" as IconName, value: "R0", label: "Extra fees" },
+                  { icon: "calendar" as IconName, value: "1st", label: "Priority booking" },
+                  { icon: "repeat" as IconName, value: "30", label: "Days valid" },
+                ].map((benefit) => (
+                  <div className="benefit-card" key={benefit.label}>
+                    <span><Icon name={benefit.icon} size={17} /></span>
+                    <strong>{benefit.value}</strong>
+                    <small>{benefit.label}</small>
+                  </div>
+                ))}
+              </div>
+
+              <section className="profile-section">
+                <div className="section-heading">
+                  <h2>Choose your pass</h2>
+                  <AppButton className="text-button">Compare</AppButton>
+                </div>
+                <div className="plan-row">
+                  <AppButton className="plan-card">
+                    <span>Basic</span>
+                    <strong>R99</strong>
+                    <small>5% off</small>
+                  </AppButton>
+                  <AppButton className="plan-card selected">
+                    <span>MOST POPULAR</span>
+                    <strong>R149</strong>
+                    <small>20% off</small>
+                  </AppButton>
+                  <AppButton className="plan-card">
+                    <span>Premium</span>
+                    <strong>R249</strong>
+                    <small>Family benefits</small>
+                  </AppButton>
+                </div>
+                <AppButton className="primary-button pass-button">Get your Go365 Pass</AppButton>
+              </section>
+
+              <section className="profile-section">
+                <h2>Account</h2>
+                <div className="settings-list">
+                  {[
+                    { icon: "pin" as IconName, title: "Saved places", note: "Home and work" },
+                    { icon: "bell" as IconName, title: "Morning alerts", note: "Wake-up set for 05:45" },
+                    { icon: "shield" as IconName, title: "Safety & support", note: "Trusted contacts" },
+                  ].map((item) => (
+                    <AppButton className="setting-row" key={item.title}>
+                      <span className="setting-icon"><Icon name={item.icon} size={18} /></span>
+                      <span><strong>{item.title}</strong><small>{item.note}</small></span>
+                      <Icon name="chevron" size={17} />
+                    </AppButton>
+                  ))}
+                </div>
+              </section>
+            </div>
+          ) : (
+          <>
           <div className="greeting-row">
             <div>
               <p className="eyebrow">GOOD MORNING</p>
@@ -240,6 +323,19 @@ export default function App() {
             <Icon name="pin" size={16} />
             <span>Home · Randburg, Johannesburg</span>
             <AppButton className="text-button">Change</AppButton>
+          </div>
+
+          <div className="summary-grid">
+            <AppButton className="summary-card">
+              <span>RIDES THIS MONTH</span>
+              <strong>18</strong>
+              <small><Icon name="repeat" size={12} /> 12 recurring</small>
+            </AppButton>
+            <AppButton className="summary-card pass-summary" onClick={() => setActiveTab("Profile")}>
+              <span>GO365 PASS</span>
+              <strong>Save 20%</strong>
+              <small>Explore membership <Icon name="chevron" size={12} /></small>
+            </AppButton>
           </div>
 
           <section className="next-ride-card">
@@ -344,6 +440,8 @@ export default function App() {
               ))}
             </div>
           </section>
+          </>
+          )}
         </div>
 
         <nav className="bottom-nav" aria-label="Main navigation">
