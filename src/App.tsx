@@ -4,7 +4,9 @@ type IconName =
   | "arrow"
   | "bell"
   | "briefcase"
+  | "bus"
   | "calendar"
+  | "car"
   | "chevron"
   | "clock"
   | "grid"
@@ -12,6 +14,8 @@ type IconName =
   | "home"
   | "paint"
   | "pin"
+  | "repeat"
+  | "route"
   | "search"
   | "shield"
   | "sparkles"
@@ -34,10 +38,24 @@ function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
         <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2" />
       </>
     ),
+    bus: (
+      <>
+        <rect x="4" y="3" width="16" height="16" rx="3" />
+        <path d="M4 11h16M8 19v2M16 19v2M8 7h8" />
+        <circle cx="8" cy="15" r="1" />
+        <circle cx="16" cy="15" r="1" />
+      </>
+    ),
     calendar: (
       <>
         <rect x="3" y="5" width="18" height="16" rx="2" />
         <path d="M16 3v4M8 3v4M3 10h18" />
+      </>
+    ),
+    car: (
+      <>
+        <path d="m5 11 2-5h10l2 5M3 13a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5H3z" />
+        <path d="M5 18v2M19 18v2M7 15h.01M17 15h.01" />
       </>
     ),
     chevron: <path d="m9 18 6-6-6-6" />,
@@ -77,6 +95,20 @@ function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
       <>
         <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
         <circle cx="12" cy="10" r="2.5" />
+      </>
+    ),
+    repeat: (
+      <>
+        <path d="m17 2 4 4-4 4" />
+        <path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4" />
+        <path d="M21 13v2a3 3 0 0 1-3 3H3" />
+      </>
+    ),
+    route: (
+      <>
+        <circle cx="6" cy="19" r="2" />
+        <circle cx="18" cy="5" r="2" />
+        <path d="M8 19h3a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h6" />
       </>
     ),
     search: (
@@ -121,29 +153,29 @@ function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   );
 }
 
-const categories: { label: string; icon: IconName }[] = [
-  { label: "Cleaning", icon: "sparkles" },
-  { label: "Repairs", icon: "wrench" },
-  { label: "Moving", icon: "briefcase" },
-  { label: "Painting", icon: "paint" },
+const rideTypes: { label: string; icon: IconName }[] = [
+  { label: "Staff ride", icon: "briefcase" },
+  { label: "School run", icon: "bus" },
+  { label: "Group trip", icon: "user" },
+  { label: "Plan a route", icon: "route" },
 ];
 
-const workers = [
+const scheduledRides = [
   {
-    initials: "TK",
-    name: "Thabo K.",
-    role: "Handyman",
-    rating: "4.9",
-    jobs: "128 jobs",
-    tone: "sage",
+    day: "TUE",
+    date: "18",
+    time: "06:30",
+    route: "Home → Sandton Office",
+    detail: "Toyota Quantum · 4 seats left",
+    status: "Confirmed",
   },
   {
-    initials: "NM",
-    name: "Naledi M.",
-    role: "Home cleaner",
-    rating: "4.8",
-    jobs: "96 jobs",
-    tone: "sand",
+    day: "WED",
+    date: "19",
+    time: "06:30",
+    route: "Home → Sandton Office",
+    detail: "Recurring weekday ride",
+    status: "Scheduled",
   },
 ];
 
@@ -164,9 +196,10 @@ function AppButton({
 }
 
 export default function App() {
-  const [activeCategory, setActiveCategory] = useState("Cleaning");
+  const [activeRide, setActiveRide] = useState("Staff ride");
   const [activeTab, setActiveTab] = useState("Home");
   const [showRequest, setShowRequest] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   return (
     <main className="app-stage">
@@ -188,7 +221,7 @@ export default function App() {
           <div className="greeting-row">
             <div>
               <p className="eyebrow">GOOD MORNING</p>
-              <h1>What needs doing?</h1>
+              <h1>Your day, on schedule.</h1>
             </div>
             <div className="avatar">LM</div>
           </div>
@@ -197,7 +230,7 @@ export default function App() {
             <span className="search-icon">
               <Icon name="search" size={19} />
             </span>
-            <span className="search-copy">Describe the job you need</span>
+            <span className="search-copy">Where do you need to go?</span>
             <span className="search-action">
               <Icon name="arrow" size={18} />
             </span>
@@ -205,26 +238,67 @@ export default function App() {
 
           <div className="location-row">
             <Icon name="pin" size={16} />
-            <span>Sandton, Johannesburg</span>
+            <span>Home · Randburg, Johannesburg</span>
             <AppButton className="text-button">Change</AppButton>
           </div>
 
+          <section className="next-ride-card">
+            <div className="ride-card-top">
+              <span className="live-pill"><i /> NEXT PICKUP</span>
+              <span className="ride-countdown"><Icon name="clock" size={14} /> In 38 min</span>
+            </div>
+            <div className="ride-time-row">
+              <div>
+                <span className="ride-time">06:30</span>
+                <span className="ride-date">Today, 18 June</span>
+              </div>
+              <span className="vehicle-chip"><Icon name="bus" size={22} /></span>
+            </div>
+            <div className="route-line">
+              <span className="route-track"><i /><i /></span>
+              <div>
+                <strong>Home pickup</strong>
+                <small>12 Oak Avenue, Randburg</small>
+                <strong>Sandton Office</strong>
+                <small>90 Rivonia Road · ETA 07:15</small>
+              </div>
+            </div>
+            <div className="driver-row">
+              <span className="driver-avatar">TM</span>
+              <span>
+                <strong>Thabo M.</strong>
+                <small>Toyota Quantum · JH 42 LM GP</small>
+              </span>
+              <span className="driver-rating"><Icon name="star" size={12} /> 4.9</span>
+            </div>
+            <AppButton
+              className={`ready-button ${isReady ? "confirmed" : ""}`}
+              onClick={() => setIsReady(!isReady)}
+            >
+              {isReady ? "You're ready — driver notified" : "I'm ready"}
+              <Icon name={isReady ? "shield" : "arrow"} size={18} />
+            </AppButton>
+          </section>
+
           <section className="section-block">
             <div className="section-heading">
-              <h2>Popular services</h2>
-              <AppButton className="text-button">See all</AppButton>
+              <h2>Plan your transport</h2>
+              <AppButton className="text-button" onClick={() => setShowRequest(true)}>View routes</AppButton>
             </div>
             <div className="category-grid">
-              {categories.map((category) => (
+              {rideTypes.map((ride) => (
                 <AppButton
-                  className={`category-card ${activeCategory === category.label ? "active" : ""}`}
-                  key={category.label}
-                  onClick={() => setActiveCategory(category.label)}
+                  className={`category-card ${activeRide === ride.label ? "active" : ""}`}
+                  key={ride.label}
+                  onClick={() => {
+                    setActiveRide(ride.label);
+                    setShowRequest(true);
+                  }}
                 >
                   <span className="category-icon">
-                    <Icon name={category.icon} size={22} />
+                    <Icon name={ride.icon} size={22} />
                   </span>
-                  <span>{category.label}</span>
+                  <span>{ride.label}</span>
                 </AppButton>
               ))}
             </div>
@@ -232,11 +306,11 @@ export default function App() {
 
           <AppButton className="promo-card" onClick={() => setShowRequest(true)}>
             <span className="promo-icon">
-              <Icon name="shield" size={25} />
+              <Icon name="repeat" size={25} />
             </span>
             <span className="promo-copy">
-              <strong>Help, right when you need it</strong>
-              <span>Post a job and get matched in minutes.</span>
+              <strong>Make this your weekday route</strong>
+              <span>Reserve your seat once. Ride every workday.</span>
             </span>
             <span className="round-arrow">
               <Icon name="chevron" size={17} />
@@ -246,26 +320,23 @@ export default function App() {
           <section className="section-block workers-section">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">READY NEAR YOU</p>
-                <h2>Top-rated workers</h2>
+                <p className="eyebrow">YOUR WEEK</p>
+                <h2>Scheduled rides</h2>
               </div>
-              <AppButton className="text-button">View map</AppButton>
+              <AppButton className="text-button">See calendar</AppButton>
             </div>
             <div className="worker-list">
-              {workers.map((worker) => (
-                <AppButton className="worker-card" key={worker.name}>
-                  <span className={`worker-avatar ${worker.tone}`}>{worker.initials}</span>
-                  <span className="worker-info">
-                    <strong>{worker.name}</strong>
-                    <span>{worker.role}</span>
-                    <small>
-                      <Icon name="star" size={12} />
-                      {worker.rating} <i /> {worker.jobs}
-                    </small>
+              {scheduledRides.map((ride) => (
+                <AppButton className="worker-card" key={`${ride.day}-${ride.date}`}>
+                  <span className="date-tile">
+                    <small>{ride.day}</small>
+                    <strong>{ride.date}</strong>
                   </span>
-                  <span className="availability">
-                    <i /> Available
+                  <span className="worker-info ride-info">
+                    <strong>{ride.time} · {ride.route}</strong>
+                    <span>{ride.detail}</span>
                   </span>
+                  <span className="availability"><i /> {ride.status}</span>
                   <span className="worker-arrow">
                     <Icon name="chevron" size={17} />
                   </span>
@@ -278,7 +349,7 @@ export default function App() {
         <nav className="bottom-nav" aria-label="Main navigation">
           {[
             { label: "Explore", icon: "grid" as IconName },
-            { label: "Bookings", icon: "calendar" as IconName },
+            { label: "Rides", icon: "calendar" as IconName },
           ].map((item) => (
             <AppButton
               className={`nav-item ${activeTab === item.label ? "active" : ""}`}
@@ -294,7 +365,6 @@ export default function App() {
               className="home-button"
               onClick={() => {
                 setActiveTab("Home");
-                setShowRequest(true);
               }}
             >
               <Icon name="home" size={24} />
@@ -302,7 +372,7 @@ export default function App() {
             <span>Home</span>
           </div>
           {[
-            { label: "Jobs", icon: "briefcase" as IconName },
+            { label: "Routes", icon: "route" as IconName },
             { label: "Profile", icon: "user" as IconName },
           ].map((item) => (
             <AppButton
@@ -319,37 +389,55 @@ export default function App() {
         {showRequest && (
           <div className="sheet-backdrop" onClick={() => setShowRequest(false)}>
             <section
-              aria-label="Create a job request"
+              aria-label="Schedule a ride"
               className="request-sheet"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="sheet-handle" />
               <div className="sheet-icon">
-                <Icon name="hammer" size={26} />
+                <Icon name="car" size={26} />
               </div>
-              <h2>Let&apos;s get it done</h2>
-              <p>Tell us what you need and we&apos;ll find the right worker nearby.</p>
+              <h2>Schedule your ride</h2>
+              <p>Reserve a seat for one trip or make it your recurring work route.</p>
               <label>
-                Job type
+                Transport type
                 <select
-                  onChange={(event) => setActiveCategory(event.target.value)}
-                  value={activeCategory}
+                  onChange={(event) => setActiveRide(event.target.value)}
+                  value={activeRide}
                 >
-                  {categories.map((category) => (
-                    <option key={category.label}>{category.label}</option>
+                  {rideTypes.map((ride) => (
+                    <option key={ride.label}>{ride.label}</option>
                   ))}
                 </select>
               </label>
               <label>
-                When do you need help?
-                <select defaultValue="Today">
-                  <option>Today</option>
-                  <option>Tomorrow</option>
-                  <option>This week</option>
+                Pickup route
+                <select defaultValue="Randburg to Sandton">
+                  <option>Randburg to Sandton</option>
+                  <option>Soweto to Johannesburg CBD</option>
+                  <option>Midrand to Rosebank</option>
                 </select>
               </label>
+              <div className="sheet-options">
+                <label>
+                  Pickup time
+                  <select defaultValue="06:30">
+                    <option>06:30</option>
+                    <option>07:00</option>
+                    <option>07:30</option>
+                  </select>
+                </label>
+                <label>
+                  Frequency
+                  <select defaultValue="Weekdays">
+                    <option>Weekdays</option>
+                    <option>Once-off</option>
+                    <option>Custom days</option>
+                  </select>
+                </label>
+              </div>
               <AppButton className="primary-button" onClick={() => setShowRequest(false)}>
-                Find a worker
+                Find available seats
                 <Icon name="arrow" size={18} />
               </AppButton>
             </section>

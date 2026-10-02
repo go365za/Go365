@@ -258,6 +258,217 @@ h2 {
   margin-left: auto;
 }
 
+.next-ride-card {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 22px;
+  color: #fffaf0;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(69, 137, 94, 0.55), transparent 38%),
+    #0b3d24;
+  box-shadow: 0 16px 32px rgba(11, 61, 36, 0.2);
+}
+
+.ride-card-top,
+.ride-time-row,
+.driver-row {
+  display: flex;
+  align-items: center;
+}
+
+.ride-card-top,
+.ride-time-row {
+  justify-content: space-between;
+}
+
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 250, 240, 0.76);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.live-pill i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #79bc8e;
+  box-shadow: 0 0 0 4px rgba(121, 188, 142, 0.13);
+}
+
+.ride-countdown {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255, 250, 240, 0.75);
+  font-size: 10px;
+}
+
+.ride-time-row {
+  margin-top: 12px;
+}
+
+.ride-time-row > div {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.ride-time {
+  font-size: 36px;
+  font-weight: 780;
+  letter-spacing: -0.055em;
+}
+
+.ride-date {
+  color: rgba(255, 250, 240, 0.72);
+  font-size: 11px;
+}
+
+.vehicle-chip {
+  display: grid;
+  width: 41px;
+  height: 41px;
+  place-items: center;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.route-line {
+  display: flex;
+  gap: 12px;
+  margin: 13px 0 15px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.11);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.route-track {
+  position: relative;
+  width: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin: 3px 0;
+}
+
+.route-track::before {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  width: 1px;
+  content: "";
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.route-track i {
+  z-index: 1;
+  width: 7px;
+  height: 7px;
+  border: 2px solid #fffaf0;
+  border-radius: 50%;
+  background: #0b3d24;
+}
+
+.route-track i:last-child {
+  background: #fffaf0;
+}
+
+.route-line > div {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+
+.route-line strong {
+  font-size: 11px;
+}
+
+.route-line small {
+  margin-bottom: 8px;
+  color: rgba(255, 250, 240, 0.6);
+  font-size: 9px;
+}
+
+.route-line small:last-child {
+  margin-bottom: 0;
+}
+
+.driver-row {
+  gap: 10px;
+}
+
+.driver-avatar {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 11px;
+  color: #0b3d24;
+  background: #d7e4d8;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.driver-row > span:nth-child(2) {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.driver-row strong {
+  font-size: 11px;
+}
+
+.driver-row small {
+  margin-top: 2px;
+  color: rgba(255, 250, 240, 0.58);
+  font-size: 8px;
+}
+
+.driver-rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+}
+
+.driver-rating .icon {
+  color: #f5b941;
+  fill: #f5b941;
+  stroke-width: 0;
+}
+
+.ready-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 15px;
+  padding: 12px;
+  border: 0;
+  border-radius: 12px;
+  color: #0b3d24;
+  background: #fffaf0;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  transition: background 160ms ease;
+}
+
+.ready-button.confirmed {
+  color: #fffaf0;
+  background: #287147;
+}
+
 .section-block {
   margin-top: 28px;
 }
@@ -409,6 +620,31 @@ h2 {
   background: #eadfc8;
 }
 
+.date-tile {
+  width: 46px;
+  height: 51px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  color: #0b3d24;
+  background: #e2ebe2;
+}
+
+.date-tile small {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.date-tile strong {
+  margin-top: 1px;
+  font-size: 18px;
+  line-height: 1;
+}
+
 .worker-info {
   display: flex;
   flex-direction: column;
@@ -443,6 +679,17 @@ h2 {
   height: 2px;
   border-radius: 50%;
   background: #9a9c95;
+}
+
+.ride-info {
+  max-width: calc(100% - 72px);
+}
+
+.ride-info strong,
+.ride-info span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .availability {
@@ -595,6 +842,12 @@ h2 {
   color: #1b1e18;
   outline: none;
   background: #fff;
+}
+
+.sheet-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .primary-button {
