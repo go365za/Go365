@@ -1,1 +1,10 @@
-{}
+{
+  "description": "Connects workers with job opportunities in real-time, streamlining the hiring process and enhancing workforce efficiency for employers and job seekers.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
