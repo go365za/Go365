@@ -453,7 +453,160 @@ function AlertsScreen() {
   );
 }
 
-function DriverScreen({ onExit }: { onExit: () => void }) {
+function DriverTripsScreen() {
+  const [filter, setFilter] = useState("Scheduled");
+  const trips = filter === "Scheduled"
+    ? [
+        { day: "TODAY", time: "17:15", passenger: "Lerato M.", route: "Sandton → Randburg", fare: "R48", state: "Confirmed" },
+        { day: "WED 19", time: "06:30", passenger: "Company route", route: "Randburg → Sandton", fare: "R240", state: "8 riders" },
+        { day: "WED 19", time: "17:15", passenger: "Lerato M.", route: "Sandton → Randburg", fare: "R48", state: "Recurring" },
+      ]
+    : [
+        { day: "MON 17", time: "17:10", passenger: "Lerato M.", route: "Sandton → Randburg", fare: "R48", state: "Completed" },
+        { day: "MON 17", time: "06:32", passenger: "Company route", route: "Randburg → Sandton", fare: "R240", state: "Completed" },
+      ];
+
+  return (
+    <div className="screen-page">
+      <ScreenHeading eyebrow="DRIVER APP" title="Your trips" action="Calendar" />
+      <div className="segmented-control">
+        {["Scheduled", "History"].map((item) => (
+          <AppButton className={filter === item ? "active" : ""} key={item} onClick={() => setFilter(item)}>
+            {item}
+          </AppButton>
+        ))}
+      </div>
+      <div className="driver-trip-summary">
+        <div><strong>{filter === "Scheduled" ? "6" : "24"}</strong><small>{filter === "Scheduled" ? "This week" : "This month"}</small></div>
+        <div><strong>{filter === "Scheduled" ? "R876" : "R4,820"}</strong><small>{filter === "Scheduled" ? "Expected" : "Earned"}</small></div>
+        <div><strong>96%</strong><small>On time</small></div>
+      </div>
+      <div className="driver-trip-list">
+        {trips.map((trip) => (
+          <AppButton className="driver-list-card" key={`${trip.day}-${trip.time}`}>
+            <span className="trip-time-block"><small>{trip.day}</small><strong>{trip.time}</strong></span>
+            <span className="trip-list-info">
+              <strong>{trip.route}</strong>
+              <small><Icon name="user" size={11} /> {trip.passenger}</small>
+              <i>{trip.state}</i>
+            </span>
+            <span className="trip-list-fare">{trip.fare}<Icon name="chevron" size={15} /></span>
+          </AppButton>
+        ))}
+      </div>
+      {filter === "Scheduled" && (
+        <section className="open-trip-card">
+          <span><Icon name="route" size={20} /></span>
+          <div><strong>Open trip requests</strong><small>3 routes match your vehicle and area</small></div>
+          <AppButton className="mini-action">View</AppButton>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function DriverEarningsScreen() {
+  const [range, setRange] = useState("Week");
+  const bars = range === "Week" ? [40, 68, 52, 83, 64, 92, 31] : [48, 62, 78, 55, 88, 72, 95];
+
+  return (
+    <div className="screen-page">
+      <ScreenHeading eyebrow="DRIVER APP" title="Earnings" action="Statement" />
+      <section className="earnings-hero">
+        <span>AVAILABLE BALANCE</span>
+        <strong>R3,840.00</strong>
+        <small><Icon name="arrow" size={12} /> 12% higher than last week</small>
+        <AppButton>Request payout</AppButton>
+      </section>
+      <div className="range-row">
+        {["Week", "Month", "Year"].map((item) => (
+          <AppButton className={range === item ? "active" : ""} key={item} onClick={() => setRange(item)}>{item}</AppButton>
+        ))}
+      </div>
+      <section className="earnings-chart-card">
+        <div className="chart-heading"><span><strong>R3,840</strong><small>Total earnings</small></span><i>+12%</i></div>
+        <div className="bar-chart">
+          {bars.map((height, index) => (
+            <span key={index}><i className={`bar-height-${height}`} /><small>{["M", "T", "W", "T", "F", "S", "S"][index]}</small></span>
+          ))}
+        </div>
+      </section>
+      <div className="earning-mini-grid">
+        <div><span><Icon name="car" size={17} /></span><strong>R3,460</strong><small>Trip fares</small></div>
+        <div><span><Icon name="star" size={17} /></span><strong>R380</strong><small>Bonuses</small></div>
+      </div>
+      <section className="profile-section">
+        <div className="section-heading"><h2>Recent activity</h2><AppButton className="text-button">See all</AppButton></div>
+        <div className="payout-list">
+          {[
+            { title: "Sandton → Randburg", date: "Today · 07:14", value: "+R48.00" },
+            { title: "Company route", date: "Yesterday · 17:58", value: "+R240.00" },
+            { title: "Weekly payout", date: "14 June", value: "−R2,950.00" },
+          ].map((item) => (
+            <div key={item.date}><span><strong>{item.title}</strong><small>{item.date}</small></span><strong>{item.value}</strong></div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function DriverProfileScreen({ onExit }: { onExit: () => void }) {
+  const [accepting, setAccepting] = useState(true);
+
+  return (
+    <div className="screen-page">
+      <ScreenHeading eyebrow="DRIVER PROFILE" title="Account & vehicle" action="Edit" />
+      <section className="driver-profile-card">
+        <span className="driver-avatar profile-driver-avatar">TM</span>
+        <span><strong>Thabo Molefe</strong><small>Verified Go365 driver</small><i><Icon name="star" size={11} /> 4.8 · 128 trips</i></span>
+        <span className="verified-mark"><Icon name="shield" size={17} /></span>
+      </section>
+      <section className="vehicle-card">
+        <div className="vehicle-visual"><Icon name="bus" size={35} /></div>
+        <div><p className="eyebrow">CURRENT VEHICLE</p><strong>Toyota Quantum</strong><small>CAA 123 456 · 14 seats</small></div>
+        <AppButton className="profile-edit">Manage</AppButton>
+      </section>
+      <div className="driver-status-row">
+        <span><strong>Accept trip requests</strong><small>Receive routes that match your vehicle</small></span>
+        <AppButton className={`switch ${accepting ? "on" : ""}`} onClick={() => setAccepting(!accepting)}><i /></AppButton>
+      </div>
+      <section className="profile-section">
+        <h2>Driver tools</h2>
+        <div className="settings-list driver-settings">
+          {[
+            { icon: "shield" as IconName, title: "Documents & verification", note: "All documents valid", badge: "Verified" },
+            { icon: "route" as IconName, title: "Preferred routes", note: "Randburg, Sandton, Rosebank", badge: "" },
+            { icon: "calendar" as IconName, title: "Availability", note: "Weekdays · 05:30–20:30", badge: "" },
+            { icon: "bell" as IconName, title: "Trip notifications", note: "Push and SMS enabled", badge: "" },
+          ].map((item) => (
+            <AppButton className="setting-row" key={item.title}>
+              <span className="setting-icon"><Icon name={item.icon} size={18} /></span>
+              <span><strong>{item.title}</strong><small>{item.note}</small></span>
+              {item.badge && <i className="verified-badge">{item.badge}</i>}
+              <Icon name="chevron" size={16} />
+            </AppButton>
+          ))}
+        </div>
+      </section>
+      <AppButton className="passenger-app-button" onClick={onExit}>
+        <Icon name="user" size={18} />
+        <span><strong>Switch to Passenger App</strong><small>Book and manage your personal rides</small></span>
+        <Icon name="chevron" size={17} />
+      </AppButton>
+    </div>
+  );
+}
+
+function DriverScreen({
+  onExit,
+  onNavigate,
+  view,
+}: {
+  onExit: () => void;
+  onNavigate: (view: string) => void;
+  view: string;
+}) {
   const [online, setOnline] = useState(true);
   const [tripStage, setTripStage] = useState(0);
   const stages = ["Request", "Pickup", "On trip", "Complete"];
@@ -483,6 +636,10 @@ function DriverScreen({ onExit }: { onExit: () => void }) {
       action: "Back to dashboard",
     },
   ][tripStage];
+
+  if (view === "Trips") return <DriverTripsScreen />;
+  if (view === "Earnings") return <DriverEarningsScreen />;
+  if (view === "Profile") return <DriverProfileScreen onExit={onExit} />;
 
   return (
     <div className="screen-page driver-screen">
@@ -571,10 +728,10 @@ function DriverScreen({ onExit }: { onExit: () => void }) {
       </section>
 
       <section className="driver-bottom-grid">
-        <AppButton><span><Icon name="briefcase" size={18} /></span><strong>Earnings</strong><small>R3,840 this week</small></AppButton>
-        <AppButton><span><Icon name="bus" size={18} /></span><strong>Vehicle</strong><small>Toyota Quantum</small></AppButton>
-        <AppButton><span><Icon name="shield" size={18} /></span><strong>Documents</strong><small>All verified</small></AppButton>
-        <AppButton><span><Icon name="clock" size={18} /></span><strong>Trip history</strong><small>128 completed</small></AppButton>
+        <AppButton onClick={() => onNavigate("Earnings")}><span><Icon name="briefcase" size={18} /></span><strong>Earnings</strong><small>R3,840 this week</small></AppButton>
+        <AppButton onClick={() => onNavigate("Profile")}><span><Icon name="bus" size={18} /></span><strong>Vehicle</strong><small>Toyota Quantum</small></AppButton>
+        <AppButton onClick={() => onNavigate("Profile")}><span><Icon name="shield" size={18} /></span><strong>Documents</strong><small>All verified</small></AppButton>
+        <AppButton onClick={() => onNavigate("Trips")}><span><Icon name="clock" size={18} /></span><strong>Trip history</strong><small>128 completed</small></AppButton>
       </section>
     </div>
   );
@@ -584,6 +741,7 @@ export default function App() {
   const [activeRide, setActiveRide] = useState("Staff ride");
   const [activeTab, setActiveTab] = useState("Home");
   const [appMode, setAppMode] = useState<"passenger" | "driver">("passenger");
+  const [driverTab, setDriverTab] = useState("Home");
   const [showRequest, setShowRequest] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
@@ -612,6 +770,8 @@ export default function App() {
                 setAppMode("passenger");
                 setActiveTab("Profile");
               }}
+              onNavigate={setDriverTab}
+              view={driverTab}
             />
           ) : activeTab === "Profile" ? (
             <div className="profile-screen">
@@ -693,7 +853,10 @@ export default function App() {
                   ))}
                   <AppButton
                     className="setting-row driver-app-row"
-                    onClick={() => setAppMode("driver")}
+                    onClick={() => {
+                      setAppMode("driver");
+                      setDriverTab("Home");
+                    }}
                   >
                     <span className="setting-icon"><Icon name="car" size={18} /></span>
                     <span><strong>Switch to Driver App</strong><small>Trips, earnings and vehicle tools</small></span>
@@ -868,14 +1031,14 @@ export default function App() {
 
         {appMode === "driver" ? (
           <nav className="bottom-nav driver-nav" aria-label="Driver navigation">
-            <AppButton className="nav-item active"><Icon name="home" size={21} /><span>Home</span></AppButton>
-            <AppButton className="nav-item"><Icon name="calendar" size={21} /><span>Trips</span></AppButton>
+            <AppButton className={`nav-item ${driverTab === "Home" ? "active" : ""}`} onClick={() => setDriverTab("Home")}><Icon name="home" size={21} /><span>Home</span></AppButton>
+            <AppButton className={`nav-item ${driverTab === "Trips" ? "active" : ""}`} onClick={() => setDriverTab("Trips")}><Icon name="calendar" size={21} /><span>Trips</span></AppButton>
             <div className="home-slot">
-              <AppButton className="home-button"><Icon name="car" size={24} /></AppButton>
+              <AppButton className="home-button" onClick={() => setDriverTab("Home")}><Icon name="car" size={24} /></AppButton>
               <span>Drive</span>
             </div>
-            <AppButton className="nav-item"><Icon name="briefcase" size={21} /><span>Earnings</span></AppButton>
-            <AppButton className="nav-item" onClick={() => setAppMode("passenger")}><Icon name="user" size={21} /><span>Passenger</span></AppButton>
+            <AppButton className={`nav-item ${driverTab === "Earnings" ? "active" : ""}`} onClick={() => setDriverTab("Earnings")}><Icon name="briefcase" size={21} /><span>Earnings</span></AppButton>
+            <AppButton className={`nav-item ${driverTab === "Profile" ? "active" : ""}`} onClick={() => setDriverTab("Profile")}><Icon name="user" size={21} /><span>Profile</span></AppButton>
           </nav>
         ) : (
         <nav className="bottom-nav" aria-label="Main navigation">
