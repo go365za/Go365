@@ -195,6 +195,264 @@ function AppButton({
   );
 }
 
+function ScreenHeading({
+  eyebrow,
+  title,
+  action,
+}: {
+  eyebrow: string;
+  title: string;
+  action?: string;
+}) {
+  return (
+    <div className="screen-heading">
+      <div>
+        <p className="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+      </div>
+      {action && <AppButton className="profile-edit">{action}</AppButton>}
+    </div>
+  );
+}
+
+function ExploreScreen({ onBook }: { onBook: (type: string) => void }) {
+  const [filter, setFilter] = useState("All");
+  const routes = [
+    {
+      icon: "bus" as IconName,
+      name: "Randburg → Sandton",
+      time: "06:30 · Weekdays",
+      detail: "4 pickup points · 45 min",
+      price: "R48",
+      seats: "4 seats",
+      pass: true,
+    },
+    {
+      icon: "car" as IconName,
+      name: "Midrand → Rosebank",
+      time: "07:00 · Weekdays",
+      detail: "Direct ride · 35 min",
+      price: "R62",
+      seats: "2 seats",
+      pass: true,
+    },
+    {
+      icon: "bus" as IconName,
+      name: "Soweto → JHB CBD",
+      time: "05:50 · Mon–Sat",
+      detail: "6 pickup points · 55 min",
+      price: "R42",
+      seats: "7 seats",
+      pass: false,
+    },
+  ];
+
+  return (
+    <div className="screen-page">
+      <ScreenHeading eyebrow="EXPLORE TRANSPORT" title="Find your route" action="Map" />
+      <AppButton className="search-bar page-search">
+        <span className="search-icon"><Icon name="search" size={19} /></span>
+        <span className="search-copy">Search area, office or route</span>
+        <span className="filter-chip"><Icon name="route" size={16} /></span>
+      </AppButton>
+
+      <div className="filter-row">
+        {["All", "Staff", "School", "Group"].map((item) => (
+          <AppButton
+            className={`filter-button ${filter === item ? "active" : ""}`}
+            key={item}
+            onClick={() => setFilter(item)}
+          >
+            {item}
+          </AppButton>
+        ))}
+      </div>
+
+      <section className="nearby-banner">
+        <span className="nearby-icon"><Icon name="pin" size={20} /></span>
+        <span><strong>12 routes near you</strong><small>Based on your Randburg location</small></span>
+        <Icon name="chevron" size={17} />
+      </section>
+
+      <div className="section-heading page-section-heading">
+        <div><p className="eyebrow">AVAILABLE THIS WEEK</p><h2>Popular routes</h2></div>
+        <AppButton className="text-button">Sort by</AppButton>
+      </div>
+      <div className="route-card-list">
+        {routes.map((route) => (
+          <AppButton className="explore-route-card" key={route.name} onClick={() => onBook("Staff ride")}>
+            <span className="route-vehicle"><Icon name={route.icon} size={22} /></span>
+            <span className="explore-route-info">
+              <strong>{route.name}</strong>
+              <small><Icon name="clock" size={11} /> {route.time}</small>
+              <small><Icon name="route" size={11} /> {route.detail}</small>
+              <span className="route-tags">
+                <i>{route.seats}</i>
+                {route.pass && <i className="pass-tag">Pass −20%</i>}
+              </span>
+            </span>
+            <span className="route-price"><strong>{route.price}</strong><small>/ ride</small></span>
+          </AppButton>
+        ))}
+      </div>
+
+      <AppButton className="custom-route-card" onClick={() => onBook("Plan a route")}>
+        <span><Icon name="route" size={22} /></span>
+        <span><strong>Can&apos;t find your route?</strong><small>Request a new pickup and destination.</small></span>
+        <Icon name="chevron" size={18} />
+      </AppButton>
+    </div>
+  );
+}
+
+function RidesScreen() {
+  const [rideView, setRideView] = useState("Upcoming");
+  const rides = rideView === "Upcoming"
+    ? [
+        { date: "18", day: "TUE", time: "06:30", route: "Randburg → Sandton", status: "Driver assigned", icon: "bus" as IconName },
+        { date: "18", day: "TUE", time: "17:15", route: "Sandton → Randburg", status: "Scheduled", icon: "car" as IconName },
+        { date: "19", day: "WED", time: "06:30", route: "Randburg → Sandton", status: "Recurring", icon: "bus" as IconName },
+      ]
+    : [
+        { date: "17", day: "MON", time: "17:10", route: "Sandton → Randburg", status: "Completed", icon: "car" as IconName },
+        { date: "17", day: "MON", time: "06:32", route: "Randburg → Sandton", status: "Completed", icon: "bus" as IconName },
+      ];
+
+  return (
+    <div className="screen-page">
+      <ScreenHeading eyebrow="YOUR TRANSPORT" title="My rides" action="Calendar" />
+      <div className="segmented-control">
+        {["Upcoming", "Past"].map((item) => (
+          <AppButton
+            className={rideView === item ? "active" : ""}
+            key={item}
+            onClick={() => setRideView(item)}
+          >
+            {item}
+          </AppButton>
+        ))}
+      </div>
+
+      {rideView === "Upcoming" && (
+        <section className="ride-summary-strip">
+          <div><strong>6</strong><small>rides this week</small></div>
+          <i />
+          <div><strong>R288</strong><small>weekly total</small></div>
+          <i />
+          <div><strong>R72</strong><small>Pass savings</small></div>
+        </section>
+      )}
+
+      <div className="timeline-list">
+        {rides.map((ride, index) => (
+          <div className="timeline-item" key={`${ride.date}-${ride.time}`}>
+            <div className="timeline-date"><small>{ride.day}</small><strong>{ride.date}</strong></div>
+            <div className="timeline-marker"><i />{index < rides.length - 1 && <span />}</div>
+            <AppButton className="ride-schedule-card">
+              <span className="schedule-icon"><Icon name={ride.icon} size={19} /></span>
+              <span className="schedule-info">
+                <strong>{ride.time} · {ride.route}</strong>
+                <small>{ride.status}</small>
+              </span>
+              <Icon name="chevron" size={16} />
+            </AppButton>
+          </div>
+        ))}
+      </div>
+
+      {rideView === "Upcoming" && (
+        <section className="morning-card">
+          <span><Icon name="bell" size={20} /></span>
+          <div><strong>Morning assistant is on</strong><small>Wake-up at 05:45 · Pickup reminder at 06:00</small></div>
+          <AppButton className="mini-action">Edit</AppButton>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function RoutesScreen({ onBook }: { onBook: (type: string) => void }) {
+  const [activeSchedule, setActiveSchedule] = useState(true);
+
+  return (
+    <div className="screen-page">
+      <ScreenHeading eyebrow="RECURRING TRANSPORT" title="My routes" action="Add route" />
+
+      <section className="route-plan-card">
+        <div className="plan-card-head">
+          <span className="schedule-icon dark"><Icon name="repeat" size={19} /></span>
+          <span><strong>Work commute</strong><small>Monday – Friday</small></span>
+          <AppButton
+            className={`switch ${activeSchedule ? "on" : ""}`}
+            onClick={() => setActiveSchedule(!activeSchedule)}
+          ><i /></AppButton>
+        </div>
+        <div className="route-plan-line">
+          <span className="route-track light"><i /><i /></span>
+          <div>
+            <strong>06:30 · Home, Randburg</strong><small>Morning pickup</small>
+            <strong>17:15 · Sandton Office</strong><small>Return pickup</small>
+          </div>
+        </div>
+        <div className="route-plan-footer">
+          <span><Icon name="calendar" size={14} /> Next: Tomorrow</span>
+          <strong>R960 <small>/ month</small></strong>
+        </div>
+      </section>
+
+      <div className="mini-card-grid">
+        <div className="info-mini-card"><span><Icon name="bus" size={18} /></span><strong>Quantum</strong><small>Preferred vehicle</small></div>
+        <div className="info-mini-card"><span><Icon name="pin" size={18} /></span><strong>4 stops</strong><small>On your route</small></div>
+        <div className="info-mini-card"><span><Icon name="user" size={18} /></span><strong>8 riders</strong><small>Regular group</small></div>
+      </div>
+
+      <section className="profile-section">
+        <div className="section-heading">
+          <div><p className="eyebrow">SUGGESTED FOR YOU</p><h2>Other schedules</h2></div>
+        </div>
+        <div className="suggested-list">
+          {[
+            { title: "Late shift return", detail: "Sandton → Randburg", time: "20:30", price: "R58" },
+            { title: "Friday express", detail: "Sandton → Rosebank → Randburg", time: "16:30", price: "R52" },
+          ].map((route) => (
+            <AppButton className="suggested-card" key={route.title} onClick={() => onBook("Staff ride")}>
+              <span className="schedule-icon"><Icon name="car" size={18} /></span>
+              <span><strong>{route.title}</strong><small>{route.time} · {route.detail}</small></span>
+              <strong>{route.price}</strong>
+            </AppButton>
+          ))}
+        </div>
+      </section>
+
+      <AppButton className="primary-button" onClick={() => onBook("Plan a route")}>
+        Create another schedule <Icon name="arrow" size={18} />
+      </AppButton>
+    </div>
+  );
+}
+
+function AlertsScreen() {
+  return (
+    <div className="screen-page">
+      <ScreenHeading eyebrow="STAY ON TIME" title="Notifications" action="Read all" />
+      <div className="alert-list">
+        {[
+          { icon: "bus" as IconName, title: "Your driver is assigned", note: "Thabo will pick you up tomorrow at 06:30.", time: "2 min", fresh: true },
+          { icon: "bell" as IconName, title: "Morning alarm confirmed", note: "Your wake-up is set for 05:45.", time: "1 hr", fresh: true },
+          { icon: "repeat" as IconName, title: "Weekly route renewed", note: "Your weekday seat is reserved for next week.", time: "Yesterday", fresh: false },
+          { icon: "shield" as IconName, title: "Go365 Pass saving", note: "You saved R72 on rides this week.", time: "Mon", fresh: false },
+        ].map((alert) => (
+          <AppButton className={`alert-card ${alert.fresh ? "fresh" : ""}`} key={alert.title}>
+            <span className="alert-icon"><Icon name={alert.icon} size={19} /></span>
+            <span><strong>{alert.title}</strong><small>{alert.note}</small></span>
+            <time>{alert.time}</time>
+          </AppButton>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [activeRide, setActiveRide] = useState("Staff ride");
   const [activeTab, setActiveTab] = useState("Home");
@@ -299,6 +557,24 @@ export default function App() {
                 </div>
               </section>
             </div>
+          ) : activeTab === "Explore" ? (
+            <ExploreScreen
+              onBook={(type) => {
+                setActiveRide(type);
+                setShowRequest(true);
+              }}
+            />
+          ) : activeTab === "Rides" ? (
+            <RidesScreen />
+          ) : activeTab === "Routes" ? (
+            <RoutesScreen
+              onBook={(type) => {
+                setActiveRide(type);
+                setShowRequest(true);
+              }}
+            />
+          ) : activeTab === "Alerts" ? (
+            <AlertsScreen />
           ) : (
           <>
           <div className="greeting-row">
