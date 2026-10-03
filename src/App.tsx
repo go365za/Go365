@@ -453,9 +453,137 @@ function AlertsScreen() {
   );
 }
 
+function DriverScreen({ onExit }: { onExit: () => void }) {
+  const [online, setOnline] = useState(true);
+  const [tripStage, setTripStage] = useState(0);
+  const stages = ["Request", "Pickup", "On trip", "Complete"];
+  const stageContent = [
+    {
+      eyebrow: "INCOMING REQUEST",
+      title: "New scheduled ride",
+      note: "Passenger is ready",
+      action: "Accept trip",
+    },
+    {
+      eyebrow: "EN ROUTE TO PICKUP",
+      title: "12 Oak Avenue",
+      note: "12 min away · 4.2 km",
+      action: "Arrived at pickup",
+    },
+    {
+      eyebrow: "TRIP IN PROGRESS",
+      title: "Sandton Office Park",
+      note: "ETA 07:14 · 8.3 km",
+      action: "Complete trip",
+    },
+    {
+      eyebrow: "TRIP COMPLETED",
+      title: "Great drive, Thabo!",
+      note: "R48.00 added to earnings",
+      action: "Back to dashboard",
+    },
+  ][tripStage];
+
+  return (
+    <div className="screen-page driver-screen">
+      <div className="driver-welcome">
+        <div>
+          <p className="eyebrow">DRIVER DASHBOARD</p>
+          <h1>Good morning, Thabo.</h1>
+        </div>
+        <AppButton className="passenger-return" onClick={onExit}>
+          <Icon name="user" size={15} /> Passenger app
+        </AppButton>
+      </div>
+
+      <section className="online-card">
+        <span className="driver-avatar large">TM</span>
+        <span><strong>You&apos;re {online ? "online" : "offline"}</strong><small>{online ? "Ready for scheduled trips" : "Go online to receive trips"}</small></span>
+        <AppButton className={`switch ${online ? "on" : ""}`} onClick={() => setOnline(!online)}><i /></AppButton>
+      </section>
+
+      <div className="driver-stat-grid">
+        <div><span><Icon name="car" size={16} /></span><strong>4</strong><small>Trips today</small></div>
+        <div><span><Icon name="briefcase" size={16} /></span><strong>R540</strong><small>Earnings</small></div>
+        <div><span><Icon name="star" size={16} /></span><strong>4.8</strong><small>Rating</small></div>
+      </div>
+
+      <div className="driver-stage-row">
+        {stages.map((stage, index) => (
+          <AppButton
+            className={`${index === tripStage ? "active" : ""} ${index < tripStage ? "done" : ""}`}
+            key={stage}
+            onClick={() => setTripStage(index)}
+          >
+            <i>{index < tripStage ? "✓" : index + 1}</i>
+            <span>{stage}</span>
+          </AppButton>
+        ))}
+      </div>
+
+      <section className={`driver-trip-card stage-${tripStage}`}>
+        <div className="driver-trip-head">
+          <div>
+            <p className="eyebrow">{stageContent.eyebrow}</p>
+            <h2>{stageContent.title}</h2>
+            <span>{stageContent.note}</span>
+          </div>
+          {tripStage < 3 ? <span className="distance-pill">{tripStage === 0 ? "18 min" : "Live"}</span> : <span className="complete-mark">✓</span>}
+        </div>
+
+        {tripStage < 3 && (
+          <div className="route-preview">
+            <span className="map-road road-one" />
+            <span className="map-road road-two" />
+            <span className="map-road road-three" />
+            <span className="map-route route-one" />
+            <span className="map-route route-two" />
+            <span className="map-pin pickup"><Icon name="pin" size={17} /></span>
+            <span className="map-pin destination"><Icon name="pin" size={17} /></span>
+            <span className="map-car"><Icon name="car" size={18} /></span>
+          </div>
+        )}
+
+        {tripStage === 3 ? (
+          <div className="trip-complete-summary">
+            <div><span>Total fare</span><strong>R48.00</strong></div>
+            <i />
+            <div><span>Today&apos;s total</span><strong>R588.00</strong></div>
+          </div>
+        ) : (
+          <div className="driver-route-detail">
+            <span className="route-track driver-track"><i /><i /></span>
+            <div>
+              <strong>Greenstone Mall pickup</strong>
+              <small>Passenger: Lerato M. · Ready</small>
+              <strong>Sandton Office Park</strong>
+              <small>12.5 km · Company ride</small>
+            </div>
+          </div>
+        )}
+
+        <AppButton
+          className="driver-primary"
+          onClick={() => setTripStage(tripStage === 3 ? 0 : tripStage + 1)}
+        >
+          {stageContent.action} <Icon name="arrow" size={17} />
+        </AppButton>
+      </section>
+
+      <section className="driver-bottom-grid">
+        <AppButton><span><Icon name="briefcase" size={18} /></span><strong>Earnings</strong><small>R3,840 this week</small></AppButton>
+        <AppButton><span><Icon name="bus" size={18} /></span><strong>Vehicle</strong><small>Toyota Quantum</small></AppButton>
+        <AppButton><span><Icon name="shield" size={18} /></span><strong>Documents</strong><small>All verified</small></AppButton>
+        <AppButton><span><Icon name="clock" size={18} /></span><strong>Trip history</strong><small>128 completed</small></AppButton>
+      </section>
+    </div>
+  );
+}
+
 export default function App() {
   const [activeRide, setActiveRide] = useState("Staff ride");
   const [activeTab, setActiveTab] = useState("Home");
+  const [appMode, setAppMode] = useState<"passenger" | "driver">("passenger");
   const [showRequest, setShowRequest] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
@@ -467,7 +595,9 @@ export default function App() {
             <span className="brand-name">
               go<span className="brand-pin"><Icon name="pin" size={15} /></span>365
             </span>
-            <span className="brand-tagline">Every day. Every journey.</span>
+            <span className="brand-tagline">
+              {appMode === "driver" ? "Driver partner" : "Every day. Every journey."}
+            </span>
           </div>
           <AppButton className="icon-button" onClick={() => setActiveTab("Alerts")}>
             <Icon name="bell" />
@@ -476,7 +606,14 @@ export default function App() {
         </header>
 
         <div className="content">
-          {activeTab === "Profile" ? (
+          {appMode === "driver" ? (
+            <DriverScreen
+              onExit={() => {
+                setAppMode("passenger");
+                setActiveTab("Profile");
+              }}
+            />
+          ) : activeTab === "Profile" ? (
             <div className="profile-screen">
               <div className="profile-heading">
                 <div className="profile-photo">LM</div>
@@ -554,6 +691,15 @@ export default function App() {
                       <Icon name="chevron" size={17} />
                     </AppButton>
                   ))}
+                  <AppButton
+                    className="setting-row driver-app-row"
+                    onClick={() => setAppMode("driver")}
+                  >
+                    <span className="setting-icon"><Icon name="car" size={18} /></span>
+                    <span><strong>Switch to Driver App</strong><small>Trips, earnings and vehicle tools</small></span>
+                    <span className="driver-app-label">DRIVER</span>
+                    <Icon name="chevron" size={17} />
+                  </AppButton>
                 </div>
               </section>
             </div>
@@ -720,6 +866,18 @@ export default function App() {
           )}
         </div>
 
+        {appMode === "driver" ? (
+          <nav className="bottom-nav driver-nav" aria-label="Driver navigation">
+            <AppButton className="nav-item active"><Icon name="home" size={21} /><span>Home</span></AppButton>
+            <AppButton className="nav-item"><Icon name="calendar" size={21} /><span>Trips</span></AppButton>
+            <div className="home-slot">
+              <AppButton className="home-button"><Icon name="car" size={24} /></AppButton>
+              <span>Drive</span>
+            </div>
+            <AppButton className="nav-item"><Icon name="briefcase" size={21} /><span>Earnings</span></AppButton>
+            <AppButton className="nav-item" onClick={() => setAppMode("passenger")}><Icon name="user" size={21} /><span>Passenger</span></AppButton>
+          </nav>
+        ) : (
         <nav className="bottom-nav" aria-label="Main navigation">
           {[
             { label: "Explore", icon: "grid" as IconName },
@@ -759,6 +917,7 @@ export default function App() {
             </AppButton>
           ))}
         </nav>
+        )}
 
         {showRequest && (
           <div className="sheet-backdrop" onClick={() => setShowRequest(false)}>
